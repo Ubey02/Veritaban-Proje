@@ -1,0 +1,145 @@
+-- Kullanıcılar Tablosu
+CREATE TABLE kullanicilar (
+    kullanici_ID SERIAL PRIMARY KEY,
+    ad VARCHAR(100),
+    soyad VARCHAR(100),
+    cinsiyet VARCHAR(10),
+    telefon VARCHAR(25),
+    email VARCHAR(100)
+);
+
+-- Müşteriler Tablosu (Kullanıcılarla ilişkili)
+CREATE TABLE musteriler (
+    kullanici_ID INT PRIMARY KEY,
+    dogum_tarihi DATE,
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE -- kullanicilar tablosundan kullanici_ID silindiğinde, müsteriler tablosundan da silinsin
+);
+
+-- Havayolları Tablosu
+CREATE TABLE havayollari (
+    havayolu_ID SERIAL PRIMARY KEY,
+    ad VARCHAR(100),
+    ulke VARCHAR(50)
+);
+
+-- Havalimanları Tablosu
+CREATE TABLE havalimani (
+    havalimani_ID SERIAL PRIMARY KEY,
+    ad VARCHAR(100),
+    sehir VARCHAR(100)
+);
+
+-- Rotalar Tablosu
+CREATE TABLE rotalar (
+    rota_ID SERIAL PRIMARY KEY,
+    kalkis_havalimani_ID INT,
+    varis_havalimani_ID INT,
+    mesafe DECIMAL(10, 2),
+    FOREIGN KEY (kalkis_havalimani_ID) REFERENCES havalimani(havalimani_ID) ON DELETE CASCADE,
+    FOREIGN KEY (varis_havalimani_ID) REFERENCES havalimani(havalimani_ID) ON DELETE CASCADE
+);
+
+-- Uçaklar Tablosu
+CREATE TABLE ucaklar (
+    ucak_ID SERIAL PRIMARY KEY,
+    model VARCHAR(100),
+    kapasite INT,
+    havayolu_ID INT,
+    FOREIGN KEY (havayolu_ID) REFERENCES havayollari(havayolu_ID) ON DELETE CASCADE 
+);
+
+-- Uçuşlar Tablosu
+CREATE TABLE ucuslar (
+    ucus_ID SERIAL PRIMARY KEY,
+    kalkis_saati TIMESTAMP,
+    varis_saati TIMESTAMP,
+    rota_ID INT,
+    ucak_ID INT,
+    FOREIGN KEY (rota_ID) REFERENCES rotalar(rota_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucak_ID) REFERENCES ucaklar(ucak_ID) ON DELETE CASCADE
+);
+
+-- Rezervasyonlar Tablosu
+CREATE TABLE rezervasyonlar (
+    rezervasyon_ID SERIAL PRIMARY KEY,
+    kullanici_ID INT,
+    ucus_ID INT,
+    rezervasyon_tarihi DATE,
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan bir ucus silindiğinde rezervasyonlar tablosunda ki ucus da silinir
+);
+
+-- Koltuklar Tablosu
+CREATE TABLE koltuklar (
+    koltuk_ID SERIAL PRIMARY KEY,
+    ucak_ID INT,
+    koltuk_no VARCHAR(5),
+    rezervasyon_ID INT,
+    FOREIGN KEY (ucak_ID) REFERENCES ucaklar(ucak_ID) ON DELETE CASCADE,
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Ödemeler Tablosu
+CREATE TABLE odemeler (
+    odeme_ID SERIAL PRIMARY KEY,
+    rezervasyon_ID INT,
+    odeme_tarihi DATE,
+    tutar DECIMAL(10, 2),
+    odeme_tipi VARCHAR(50),
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Bagajlar Tablosu
+CREATE TABLE bagajlar (
+    bagaj_ID SERIAL PRIMARY KEY,
+    rezervasyon_ID INT,
+    bagaj_turu VARCHAR(50),
+    agirlik DECIMAL(5, 2),
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Biletler Tablosu
+CREATE TABLE biletler (
+    bilet_ID SERIAL PRIMARY KEY,
+    rezervasyon_ID INT,
+    koltuk_no VARCHAR(5),
+    fiyat DECIMAL(10, 2),
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Uçuş Kapıları Tablosu
+CREATE TABLE ucuskapilari (
+    kapi_ID SERIAL PRIMARY KEY,
+    ucus_ID INT,
+    kapi_no VARCHAR(10),
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan ucus_ID silindiğinde, ucuskapilari tablosundan da silinir
+);
+
+-- Yemek Servis Tablosu
+CREATE TABLE yemekservis (
+    servis_ID SERIAL PRIMARY KEY,
+    ucus_ID INT,
+    yemek_turu VARCHAR(50),
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan ucus_ID silindiğinde, yemekservis tablosundan da silinir
+);
+
+-- Hostesler Tablosu (Kullanıcılarla ilişkili)
+CREATE TABLE hostesler (
+    kullanici_ID INT PRIMARY KEY,
+    ucus_ID INT,
+    maas DECIMAL(10, 2),
+    dogum_tarihi DATE,
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan bir ucus silindiğinde hostesler tablosunda ki ucus da silinir
+);
+
+-- Hostes-Uçak İlişkisi Tablosu
+CREATE TABLE hostes_ucak (
+    kullanici_ID INT,
+    ucak_ID INT,
+    gorev_tarihi DATE,
+    gorev_turu VARCHAR(50),
+    PRIMARY KEY (kullanici_ID, ucak_ID),
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucak_ID) REFERENCES ucaklar(ucak_ID) ON DELETE CASCADE -- ucaklar tablosundan bir ucak_ID silindiğinde hostes_ucak tablosunda ki ucak da silinir
+);

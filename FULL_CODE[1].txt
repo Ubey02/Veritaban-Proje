@@ -1,0 +1,470 @@
+-- Kullanıcılar Tablosu
+CREATE TABLE kullanicilar (
+    kullanici_ID SERIAL PRIMARY KEY,
+    ad VARCHAR(100),
+    soyad VARCHAR(100),
+    cinsiyet VARCHAR(10),
+    telefon VARCHAR(25),
+    email VARCHAR(100)
+);
+
+-- Müşteriler Tablosu (Kullanıcılarla ilişkili)
+CREATE TABLE musteriler (
+    kullanici_ID INT PRIMARY KEY,
+    dogum_tarihi DATE,
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE -- kullanicilar tablosundan kullanici_ID silindiğinde, müsteriler tablosundan da silinsin
+);
+
+-- Havayolları Tablosu
+CREATE TABLE havayollari (
+    havayolu_ID SERIAL PRIMARY KEY,
+    ad VARCHAR(100),
+    ulke VARCHAR(50)
+);
+
+-- Havalimanları Tablosu
+CREATE TABLE havalimani (
+    havalimani_ID SERIAL PRIMARY KEY,
+    ad VARCHAR(100),
+    sehir VARCHAR(100)
+);
+
+-- Rotalar Tablosu
+CREATE TABLE rotalar (
+    rota_ID SERIAL PRIMARY KEY,
+    kalkis_havalimani_ID INT,
+    varis_havalimani_ID INT,
+    mesafe DECIMAL(10, 2),
+    FOREIGN KEY (kalkis_havalimani_ID) REFERENCES havalimani(havalimani_ID) ON DELETE CASCADE,
+    FOREIGN KEY (varis_havalimani_ID) REFERENCES havalimani(havalimani_ID) ON DELETE CASCADE
+);
+
+-- Uçaklar Tablosu
+CREATE TABLE ucaklar (
+    ucak_ID SERIAL PRIMARY KEY,
+    model VARCHAR(100),
+    kapasite INT,
+    havayolu_ID INT,
+    FOREIGN KEY (havayolu_ID) REFERENCES havayollari(havayolu_ID) ON DELETE CASCADE 
+);
+
+-- Uçuşlar Tablosu
+CREATE TABLE ucuslar (
+    ucus_ID SERIAL PRIMARY KEY,
+    kalkis_saati TIMESTAMP,
+    varis_saati TIMESTAMP,
+    rota_ID INT,
+    ucak_ID INT,
+    FOREIGN KEY (rota_ID) REFERENCES rotalar(rota_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucak_ID) REFERENCES ucaklar(ucak_ID) ON DELETE CASCADE
+);
+
+-- Rezervasyonlar Tablosu
+CREATE TABLE rezervasyonlar (
+    rezervasyon_ID SERIAL PRIMARY KEY,
+    kullanici_ID INT,
+    ucus_ID INT,
+    rezervasyon_tarihi DATE,
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan bir ucus silindiğinde rezervasyonlar tablosunda ki ucus da silinir
+);
+
+-- Koltuklar Tablosu
+CREATE TABLE koltuklar (
+    koltuk_ID SERIAL PRIMARY KEY,
+    ucak_ID INT,
+    koltuk_no VARCHAR(5),
+    rezervasyon_ID INT,
+    FOREIGN KEY (ucak_ID) REFERENCES ucaklar(ucak_ID) ON DELETE CASCADE,
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Ödemeler Tablosu
+CREATE TABLE odemeler (
+    odeme_ID SERIAL PRIMARY KEY,
+    rezervasyon_ID INT,
+    odeme_tarihi DATE,
+    tutar DECIMAL(10, 2),
+    odeme_tipi VARCHAR(50),
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Bagajlar Tablosu
+CREATE TABLE bagajlar (
+    bagaj_ID SERIAL PRIMARY KEY,
+    rezervasyon_ID INT,
+    bagaj_turu VARCHAR(50),
+    agirlik DECIMAL(5, 2),
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Biletler Tablosu
+CREATE TABLE biletler (
+    bilet_ID SERIAL PRIMARY KEY,
+    rezervasyon_ID INT,
+    koltuk_no VARCHAR(5),
+    fiyat DECIMAL(10, 2),
+    FOREIGN KEY (rezervasyon_ID) REFERENCES rezervasyonlar(rezervasyon_ID) ON DELETE CASCADE
+);
+
+-- Uçuş Kapıları Tablosu
+CREATE TABLE ucuskapilari (
+    kapi_ID SERIAL PRIMARY KEY,
+    ucus_ID INT,
+    kapi_no VARCHAR(10),
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan ucus_ID silindiğinde, ucuskapilari tablosundan da silinir
+);
+
+-- Yemek Servis Tablosu
+CREATE TABLE yemekservis (
+    servis_ID SERIAL PRIMARY KEY,
+    ucus_ID INT,
+    yemek_turu VARCHAR(50),
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan ucus_ID silindiğinde, yemekservis tablosundan da silinir
+);
+
+-- Hostesler Tablosu (Kullanıcılarla ilişkili)
+CREATE TABLE hostesler (
+    kullanici_ID INT PRIMARY KEY,
+    ucus_ID INT,
+    maas DECIMAL(10, 2),
+    dogum_tarihi DATE,
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucus_ID) REFERENCES ucuslar(ucus_ID) ON DELETE CASCADE -- ucuslar tablosundan bir ucus silindiğinde hostesler tablosunda ki ucus da silinir
+);
+
+-- Hostes-Uçak İlişkisi Tablosu
+CREATE TABLE hostes_ucak (
+    kullanici_ID INT,
+    ucak_ID INT,
+    gorev_tarihi DATE,
+    gorev_turu VARCHAR(50),
+    PRIMARY KEY (kullanici_ID, ucak_ID),
+    FOREIGN KEY (kullanici_ID) REFERENCES kullanicilar(kullanici_ID) ON DELETE CASCADE,
+    FOREIGN KEY (ucak_ID) REFERENCES ucaklar(ucak_ID) ON DELETE CASCADE -- ucaklar tablosundan bir ucak_ID silindiğinde hostes_ucak tablosunda ki ucak da silinir
+);
+
+
+INSERT INTO kullanicilar (ad, soyad, telefon, email,cinsiyet) VALUES
+('Ahmet', 'Kaya', '5551234567', 'ahmet.kaya@mail.com','Erkek'),
+('Ayşe', 'Yılmaz', '5552345678', 'ayse.yilmaz@mail.com','Erkek'),
+('Mehmet', 'Çelik', '5553456789', 'mehmet.celik@mail.com','Erkek'),
+('Fatma', 'Demir', '5554567890', 'fatma.demir@mail.com','Kadın'),
+('Ali', 'Öztürk', '5555678901', 'ali.ozturk@mail.com','Erkek');
+
+INSERT INTO musteriler (kullanici_ID, dogum_tarihi) VALUES
+(1, '1990-01-01'),
+(2, '1985-02-15'),
+(3, '1988-03-30'),
+(4, '1992-04-10'),
+(5, '1980-05-20');
+
+INSERT INTO havayollari (ad, ulke) VALUES
+('Türk Hava Yolları', 'Türkiye'),
+('Lufthansa', 'Almanya'),
+('Emirates', 'Birleşik Arap Emirlikleri'),
+('British Airways', 'İngiltere'),
+('Air France', 'Fransa');
+
+INSERT INTO havalimani (ad, sehir) VALUES
+('İstanbul Havalimanı', 'İstanbul'),
+('Frankfurt Havalimanı', 'Frankfurt'),
+('Dubai Havalimanı', 'Dubai'),
+('Heathrow Havalimanı', 'Londra'),
+('Charles de Gaulle Havalimanı', 'Paris');
+
+INSERT INTO rotalar (kalkis_havalimani_ID, varis_havalimani_ID, mesafe) VALUES
+(1, 2, 2000.50),
+(2, 3, 3000.75),
+(3, 4, 4000.20),
+(4, 5, 1500.30),
+(5, 1, 2500.80);
+
+INSERT INTO ucaklar (model, kapasite, havayolu_ID) VALUES
+('Airbus A320', 180, 1),
+('Boeing 747', 400, 2),
+('Airbus A380', 500, 3),
+('Boeing 777', 350, 4),
+('Airbus A350', 300, 5);
+
+INSERT INTO ucuslar (kalkis_saati, varis_saati, rota_ID, ucak_ID) VALUES
+('2024-12-25 08:00:00', '2024-12-25 12:00:00', 1, 1),
+('2024-12-26 10:00:00', '2024-12-26 16:00:00', 2, 2),
+('2024-12-27 09:30:00', '2024-12-27 15:30:00', 3, 3),
+('2024-12-28 14:00:00', '2024-12-28 20:00:00', 4, 4),
+('2024-12-29 07:00:00', '2024-12-29 11:00:00', 5, 5);
+
+INSERT INTO rezervasyonlar (kullanici_ID, ucus_ID, rezervasyon_tarihi) VALUES
+(1, 1, '2024-12-20'),
+(2, 2, '2024-12-21'),
+(3, 3, '2024-12-22'),
+(4, 4, '2024-12-23'),
+(5, 5, '2024-12-24');
+
+INSERT INTO koltuklar (ucak_ID, koltuk_no, rezervasyon_ID) VALUES
+(1, '1A', 1),
+(2, '2B', 2),
+(3, '3C', 3),
+(4, '4D', 4),
+(5, '5E', 5);
+
+INSERT INTO odemeler (rezervasyon_ID, odeme_tarihi, tutar, odeme_tipi) VALUES
+(1, '2024-12-20', 100.00, 'Kredi Kartı'),
+(2, '2024-12-21', 150.00, 'Nakit'),
+(3, '2024-12-22', 200.00, 'Kredi Kartı'),
+(4, '2024-12-23', 250.00, 'Banka Havalesi'),
+(5, '2024-12-24', 300.00, 'Kredi Kartı');
+
+INSERT INTO bagajlar (rezervasyon_ID, bagaj_turu, agirlik) VALUES
+(1, 'El Bagajı', 10.00),
+(2, 'Kabin Bagajı', 15.00),
+(3, 'Kabin Bagajı', 20.00),
+(4, 'Check-in Bagajı', 25.00),
+(5, 'El Bagajı', 12.00);
+
+INSERT INTO biletler (rezervasyon_ID, koltuk_no, fiyat) VALUES
+(1, '1A', 150.00),
+(2, '2B', 175.00),
+(3, '3C', 200.00),
+(4, '4D', 250.00),
+(5, '5E', 300.00);
+
+INSERT INTO ucuskapilari (ucus_ID, kapi_no) VALUES
+(1, 'A1'),
+(2, 'B2'),
+(3, 'C3'),
+(4, 'D4'),
+(5, 'E5');
+
+INSERT INTO yemekservis (ucus_ID, yemek_turu) VALUES
+(1, 'Ekspres Yiyecek'),
+(2, 'Öğle Yemeği'),
+(3, 'Akşam Yemeği'),
+(4, 'Kahvaltı'),
+(5, 'Akşam Yemeği');
+
+
+INSERT INTO hostesler (kullanici_ID, ucus_ID, maas,dogum_tarihi) VALUES
+(1, 1, 6000.00,'1990-01-01'),
+(2, 2, 7500.00,'1985-02-15'),
+(3, 3, 5200.00,'1988-03-30'),
+(4, 4, 7800.00,'1992-04-10'),
+(5, 5, 7000.00,'1980-05-20');
+
+INSERT INTO hostes_ucak (kullanici_ID, ucak_ID, gorev_tarihi, gorev_turu) VALUES
+(1, 1, '2024-12-25', 'Yemek Servisi'),
+(2, 2, '2024-12-26', 'Yardım'),
+(3, 3, '2024-12-27', 'Yemek Servisi'),
+(4, 4, '2024-12-28', 'Yardım'),
+(5, 5, '2024-12-29', 'Yemek Servisi');
+
+CREATE OR REPLACE FUNCTION kontrol_email_benzersizligi()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM kullanicilar WHERE email = NEW.email) THEN
+        RAISE EXCEPTION 'Bu e-posta adresi zaten kayıtlı: %', NEW.email;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER email_benzersizligi_trigger
+BEFORE INSERT OR UPDATE ON kullanicilar
+FOR EACH ROW
+EXECUTE FUNCTION kontrol_email_benzersizligi();
+---------------------------------------------------------
+CREATE OR REPLACE FUNCTION kontrol_rezervasyon_tekrari()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM rezervasyonlar 
+        WHERE kullanici_ID = NEW.kullanici_ID AND ucus_ID = NEW.ucus_ID
+    ) THEN
+        RAISE EXCEPTION 'Bu kullanıcı için zaten bir rezervasyon mevcut.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER rezervasyon_tekrari_trigger
+BEFORE INSERT ON rezervasyonlar
+FOR EACH ROW
+EXECUTE FUNCTION kontrol_rezervasyon_tekrari();
+
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION kontrol_hostes_maasi()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.maas < 5000 THEN
+        RAISE EXCEPTION 'Hostes maaşı 5000''den az olamaz. Girilen: %', NEW.maas;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER hostes_maasi_trigger
+BEFORE INSERT OR UPDATE ON hostesler
+FOR EACH ROW
+EXECUTE FUNCTION kontrol_hostes_maasi();
+--------------------------------------------------------------------------------
+-- FUNCTION: public.kontrol_bagaj_agirligi()
+
+-- DROP FUNCTION IF EXISTS public.kontrol_bagaj_agirligi();
+
+CREATE OR REPLACE FUNCTION public.kontrol_bagaj_agirligi()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    IF NEW.agirlik > 30 THEN
+        RAISE EXCEPTION 'Bagaj ağırlığı 30 kg''ı geçemez. Girilen ağırlık: %', NEW.agirlik;
+    END IF;
+    RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.kontrol_bagaj_agirligi()
+    OWNER TO postgres;
+-------KISITLAR-------------------------------
+
+--1. NOT NULL
+--Bazı alanların boş geçilmesini engellemek için kullanılabilir:
+--kullanicilar tablosunda ad, soyad, ve email alanları.
+--havayollari tablosunda ad.
+--havalimani tablosunda ad.
+
+ALTER TABLE kullanicilar
+ALTER COLUMN ad SET NOT NULL;
+ALTER TABLE kullanicilar
+ALTER COLUMN soyad SET NOT NULL;
+ALTER TABLE kullanicilar
+ALTER COLUMN telefon SET NOT NULL;
+
+
+--2. UNIQUE
+--Benzersiz olması gereken alanlara eklenebilir:
+--kullanicilar tablosunda telefon ve email benzersiz olmalı.
+--koltuklar tablosunda ucak_ID ve koltuk_no kombinasyonu benzersiz olmalı.
+
+ALTER TABLE kullanicilar
+ADD CONSTRAINT unique_email UNIQUE (email);
+ALTER TABLE koltuklar
+ADD CONSTRAINT unique_ucak_koltuk UNIQUE (ucak_ID, koltuk_no);
+
+
+--3. CHECK
+--Mantıksal doğrulamaları zorlamak için kullanılabilir:
+--ucaklar tablosunda kapasite > 0 olmalı.
+--rotalar tablosunda mesafe > 0 olmalı.
+--odemeler tablosunda tutar > 0 olmalı.
+
+ALTER TABLE ucaklar
+ADD CONSTRAINT check_kapasite CHECK (kapasite > 0);
+ALTER TABLE rotalar
+ADD CONSTRAINT check_mesafe CHECK (mesafe > 0);
+ALTER TABLE odemeler
+ADD CONSTRAINT check_tutar CHECK (tutar > 0);
+
+--4. DEFAULT
+--Varsayılan değerler eklemek için kullanılabilir:
+--odemeler tablosunda odeme_tipi için bir varsayılan değer belirlenebilir.
+
+ALTER TABLE odemeler
+ALTER COLUMN odeme_tipi SET DEFAULT 'Kredi Kartı';
+
+
+--5. DATE VALIDATION
+--Doğum tarihi ve tarih alanlarında mantıksal doğrulamalar yapılabilir:
+--musteriler ve hostesler tablolarında dogum_tarihi geçmiş bir tarih olmalı.
+
+ALTER TABLE musteriler
+ADD CONSTRAINT check_dogum_tarihi CHECK (dogum_tarihi < CURRENT_DATE);
+ALTER TABLE hostesler
+ADD CONSTRAINT check_dogum_tarihi_hostes CHECK (dogum_tarihi < CURRENT_DATE);
+
+
+--------------FONKSİYONLAR--------------------------------
+
+--1. Toplam Rezervasyon Sayısını Getir
+--Rezervasyonlar tablosundaki toplam rezervasyon sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_rezervasyon_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM rezervasyonlar);
+END;
+$$ LANGUAGE plpgsql;
+
+
+--2. Kullanıcı Sayısını Getir
+--Veritabanındaki toplam kullanıcı sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_kullanici_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM kullanicilar);
+END;
+$$ LANGUAGE plpgsql;
+
+
+--3. Havayolları Sayısını Getir
+--Havayolları tablosundaki toplam havayolu sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_havayolu_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM havayollari);
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--4. Toplam Bagaj Sayısını Getir
+--Bagajlar tablosundaki toplam bagaj sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_bagaj_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM bagajlar);
+END;
+$$ LANGUAGE plpgsql;
+
+-- FUNCTION: public.aramaucus(integer, integer)
+
+-- DROP FUNCTION IF EXISTS public.aramaucus(integer, integer);
+
+
+--5. Ucus bilgilerini döndürüyor 
+
+CREATE OR REPLACE FUNCTION public.aramaucus(
+	kalkis_havalimani integer,
+	varis_havalimani integer)
+    RETURNS TABLE(ucus_id integer, kalkis_saati timestamp without time zone, varis_saati timestamp without time zone, fiyat numeric) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    -- RETURN QUERY: Sorgunun sonucunu döndürmek için kullanılır.
+    RETURN QUERY
+    SELECT 
+        u.ucus_ID,         -- Uçuş ID'si
+        u.kalkis_saati,    -- Kalkış zamanı
+        u.varis_saati,     -- Varış zamanı
+        b.fiyat            -- Uçuş fiyatı
+    FROM ucuslar u
+    JOIN rotalar r ON u.rota_ID = r.rota_ID         -- Uçuş ile rotaları ilişkilendirir.
+    JOIN biletler b ON u.ucus_ID = b.rezervasyon_ID -- Uçuş ile biletleri ilişkilendirir.
+    WHERE 
+        r.kalkis_havalimani_ID = kalkis_havalimani  -- Kalkış havalimanını kontrol eder.
+        AND r.varis_havalimani_ID = varis_havalimani; -- Varış havalimanını kontrol eder.
+END;
+$BODY$;
+
+ALTER FUNCTION public.aramaucus(integer, integer)
+    OWNER TO postgres;

@@ -1,0 +1,71 @@
+CREATE OR REPLACE FUNCTION kontrol_email_benzersizligi()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM kullanicilar WHERE email = NEW.email) THEN
+        RAISE EXCEPTION 'Bu e-posta adresi zaten kayıtlı: %', NEW.email;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER email_benzersizligi_trigger
+BEFORE INSERT OR UPDATE ON kullanicilar
+FOR EACH ROW
+EXECUTE FUNCTION kontrol_email_benzersizligi();
+---------------------------------------------------------
+CREATE OR REPLACE FUNCTION kontrol_rezervasyon_tekrari()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM rezervasyonlar 
+        WHERE kullanici_ID = NEW.kullanici_ID AND ucus_ID = NEW.ucus_ID
+    ) THEN
+        RAISE EXCEPTION 'Bu kullanıcı için zaten bir rezervasyon mevcut.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER rezervasyon_tekrari_trigger
+BEFORE INSERT ON rezervasyonlar
+FOR EACH ROW
+EXECUTE FUNCTION kontrol_rezervasyon_tekrari();
+
+--------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION kontrol_hostes_maasi()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.maas < 5000 THEN
+        RAISE EXCEPTION 'Hostes maaşı 5000''den az olamaz. Girilen: %', NEW.maas;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER hostes_maasi_trigger
+BEFORE INSERT OR UPDATE ON hostesler
+FOR EACH ROW
+EXECUTE FUNCTION kontrol_hostes_maasi();
+--------------------------------------------------------------------------------
+-- FUNCTION: public.kontrol_bagaj_agirligi()
+
+-- DROP FUNCTION IF EXISTS public.kontrol_bagaj_agirligi();
+
+CREATE OR REPLACE FUNCTION public.kontrol_bagaj_agirligi()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+    IF NEW.agirlik > 30 THEN
+        RAISE EXCEPTION 'Bagaj ağırlığı 30 kg''ı geçemez. Girilen ağırlık: %', NEW.agirlik;
+    END IF;
+    RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.kontrol_bagaj_agirligi()
+    OWNER TO postgres;
+

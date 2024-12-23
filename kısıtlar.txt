@@ -1,0 +1,54 @@
+--1. NOT NULL
+--Bazı alanların boş geçilmesini engellemek için kullanılabilir:
+--kullanicilar tablosunda ad, soyad, ve email alanları.
+--havayollari tablosunda ad.
+--havalimani tablosunda ad.
+
+ALTER TABLE kullanicilar
+ALTER COLUMN ad SET NOT NULL;
+ALTER TABLE kullanicilar
+ALTER COLUMN soyad SET NOT NULL;
+ALTER TABLE kullanicilar
+ALTER COLUMN telefon SET NOT NULL;
+
+
+--2. UNIQUE
+--Benzersiz olması gereken alanlara eklenebilir:
+--kullanicilar tablosunda telefon ve email benzersiz olmalı.
+--koltuklar tablosunda ucak_ID ve koltuk_no kombinasyonu benzersiz olmalı.
+
+ALTER TABLE kullanicilar
+ADD CONSTRAINT unique_email UNIQUE (email);
+ALTER TABLE koltuklar
+ADD CONSTRAINT unique_ucak_koltuk UNIQUE (ucak_ID, koltuk_no);
+
+
+--3. CHECK
+--Mantıksal doğrulamaları zorlamak için kullanılabilir:
+--ucaklar tablosunda kapasite > 0 olmalı.
+--rotalar tablosunda mesafe > 0 olmalı.
+--odemeler tablosunda tutar > 0 olmalı.
+
+ALTER TABLE ucaklar
+ADD CONSTRAINT check_kapasite CHECK (kapasite > 0);
+ALTER TABLE rotalar
+ADD CONSTRAINT check_mesafe CHECK (mesafe > 0);
+ALTER TABLE odemeler
+ADD CONSTRAINT check_tutar CHECK (tutar > 0);
+
+--4. DEFAULT
+--Varsayılan değerler eklemek için kullanılabilir:
+--odemeler tablosunda odeme_tipi için bir varsayılan değer belirlenebilir.
+
+ALTER TABLE odemeler
+ALTER COLUMN odeme_tipi SET DEFAULT 'Kredi Kartı';
+
+
+--5. DATE VALIDATION
+--Doğum tarihi ve tarih alanlarında mantıksal doğrulamalar yapılabilir:
+--musteriler ve hostesler tablolarında dogum_tarihi geçmiş bir tarih olmalı.
+
+ALTER TABLE musteriler
+ADD CONSTRAINT check_dogum_tarihi CHECK (dogum_tarihi < CURRENT_DATE);
+ALTER TABLE hostesler
+ADD CONSTRAINT check_dogum_tarihi_hostes CHECK (dogum_tarihi < CURRENT_DATE);

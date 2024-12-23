@@ -1,0 +1,71 @@
+--1. Toplam Rezervasyon Sayısını Getir
+--Rezervasyonlar tablosundaki toplam rezervasyon sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_rezervasyon_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM rezervasyonlar);
+END;
+$$ LANGUAGE plpgsql;
+
+--2. Kullanıcı Sayısını Getir
+--Veritabanındaki toplam kullanıcı sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_kullanici_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM kullanicilar);
+END;
+$$ LANGUAGE plpgsql;
+
+--3. Havayolları Sayısını Getir
+--Havayolları tablosundaki toplam havayolu sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_havayolu_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM havayollari);
+END;
+$$ LANGUAGE plpgsql;
+
+--4. Toplam Bagaj Sayısını Getir
+--Bagajlar tablosundaki toplam bagaj sayısını döndüren fonksiyon:
+
+CREATE OR REPLACE FUNCTION toplam_bagaj_sayisi() 
+RETURNS INT AS $$
+BEGIN
+    RETURN (SELECT COUNT(*) FROM bagajlar);
+END;
+$$ LANGUAGE plpgsql;
+
+--5. Ucus bilgilerini döndürüyor 
+
+CREATE OR REPLACE FUNCTION public.aramaucus(
+	kalkis_havalimani integer,
+	varis_havalimani integer)
+    RETURNS TABLE(ucus_id integer, kalkis_saati timestamp without time zone, varis_saati timestamp without time zone, fiyat numeric) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    -- RETURN QUERY: Sorgunun sonucunu döndürmek için kullanılır.
+    RETURN QUERY
+    SELECT 
+        u.ucus_ID,         -- Uçuş ID'si
+        u.kalkis_saati,    -- Kalkış zamanı
+        u.varis_saati,     -- Varış zamanı
+        b.fiyat            -- Uçuş fiyatı
+    FROM ucuslar u
+    JOIN rotalar r ON u.rota_ID = r.rota_ID         -- Uçuş ile rotaları ilişkilendirir.
+    JOIN biletler b ON u.ucus_ID = b.rezervasyon_ID -- Uçuş ile biletleri ilişkilendirir.
+    WHERE 
+        r.kalkis_havalimani_ID = kalkis_havalimani  -- Kalkış havalimanını kontrol eder.
+        AND r.varis_havalimani_ID = varis_havalimani; -- Varış havalimanını kontrol eder.
+END;
+$BODY$;
+
+ALTER FUNCTION public.aramaucus(integer, integer)
+    OWNER TO postgres;

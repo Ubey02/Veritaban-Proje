@@ -1,0 +1,32 @@
+
+1-) kullanicilar(PK kullanici_ID SREIAL PRIMARY KEY, ad VARCHAR, soyad VARCHAR, cinsiyet VARCHAR , telefon VARCHAR , email VARCHAR)
+
+2-)odemeler(PK odeme_ID SREIAL PRIMARY KEY,FK rezervasyon_ID INT,odeme_tarihi DATE, tutar,odeme_tipi VARCHAR)
+
+3-)havalimanlari(PK havalimani_ID SREIAL PRIMARY KEY, ad VARCHAR, sehir VARCHAR)
+
+4-)rotalar(PK rota_IDSREIAL PRIMARY KEY, FK kalkis_havalimani_ID INT, FK varis_havalimani_ID INT ,mesafe DECIMAL)
+
+5-)havayollari(PK havayolu_ID SREIAL PRIMARY KEY, ad VARHCAR, ulke VARHCAR)
+
+6-)bagajlar(PK bagaj_ID SREIAL PRIMARY KEY, FK rezervasyon_ID INT, bagaj_turu VARHCAR, agirlik DECCIMAL)
+
+7-)rezervasyonlar(PK rezervasyon_ID SREIAL PRIMARY KEY, FK kullanici_ID INT, FK ucus_ID INT ,rezervasyon_tarihi DATE)
+
+8-)biletler(PK bilet_ID SREIAL PRIMARY KEY, FK rezervasyon_ID INT, koltuk_no VARCHAR, fiyat DECIMAL)
+
+9-)ucaklar(PK ucak_ID SREIAL PRIMARY KEY, model VARCHAR, kapasite INT, FK havayolu_ID INT)
+
+10-)ucuslar(PK ucus_ID SREIAL PRIMARY KEY, kalkis_saati TIMESTAMP, varis_saati TIMESTAMP, FK rota_ID INT, FK ucak_ID INT)
+
+11-)koltuklar(PK koltuk_ID SREIAL PRIMARY KEY, FK ucak_ID INT, koltuk_no VARCHAR, FK rezervasyon_ID INT)
+
+12-)ucuskapilari(PK kapi_ID SREIAL PRIMARY KEY, FK ucus_ID INT, kapi_no VARCHAR)
+
+13-)yemekservis(PK servis_ID SREIAL PRIMARY KEY, FK ucus_ID INT, yemek_turu VARCHAR)
+
+14-)musteriler(PKFK kullanici_ID INT PRIMARY KEY, dogum_tarihi DATE)
+
+15-)hostesler(PKFK kullanici_ID INT PRIMARY KEY, FK ucus_ID INT, maas DECIMAL)
+
+16-)hostes_ucak(PKFK kullanici_ID INT, PKFK ucak_ID INT, gorev_tarihi DATE, gorev_turu VARCHAR)

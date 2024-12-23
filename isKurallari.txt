@@ -1,0 +1,59 @@
+1-)Kullanıcılar tablosunda her bir kullanıcının ad, soyad, telefon ve e-posta bilgileri yer alır.
+
+2-)Müşteriler tablosu, Kullanıcılar tablosundan türetilerek müşterilerin doğum tarihi bilgisine sahiptir.
+
+3-)Hostesler tablosu, kullanıcı bilgilerine ek olarak uçuş, maaş ve doğum tarihi bilgilerini içerir.
+
+4-)Havalimanları tablosu, her bir havalimanının ID'si, adı ve bulunduğu şehir bilgilerini tutar.
+
+5-)Uçaklar tablosu, her bir uçağın model, kapasite ve ilişkili olduğu havayolu bilgilerini içerir.
+
+6-)Havayolları tablosu, her havayolunun adı, merkezi ülke bilgisi ve havayoluna ait ID numarasını barındırır.
+
+7-)Uçuşlar tablosu, uçuşların kalkış ve varış saatleri, uçuşa ait uçak ve rota bilgilerini içerir.
+
+8-)Rezervasyonlar tablosu, her bir rezervasyonun tarih, kullanıcı bilgileri ve uçuş bilgilerini içerir.
+
+9-)Biletler tablosu, her biletin koltuk numarası, fiyatı ve rezervasyon bilgilerini saklar.
+
+10-)Ödemeler tablosu, her bir ödemenin tarihi, tutarı ve ödeme türünü içerir.
+
+11-)Koltuklar tablosu, uçak içindeki koltukların numarası, rezervasyon durumu ve uçak bilgilerini içerir.
+
+12-)Bagajlar tablosu, her bagajın türü, ağırlığı ve ilişkilendirildiği rezervasyon bilgilerini içerir.
+
+13-)Rotalar tablosu, uçuş rotalarıyla ilgili kalkış ve varış havalimanları, mesafe gibi bilgileri tutar.
+
+14-)Yemek servisi tablosu, uçuşlarda sunulan yemeklerin türünü ve uçuş bilgilerini içerir.
+
+15-)Uçuş kapıları tablosu, her uçuş için atanan kapı numarası ve uçuş bilgilerini içerir.
+
+16-) Bir müşteri yalnızca bir kullanıcı kaydına bağlıdır ve bir kullanıcı hem müşteri hem de hostes olabilir.
+
+17-) Bir hostes yalnızca bir kullanıcı kaydına bağlıdır ve bir kullanıcı hem hostes hem de müşteri olabilir.
+
+18-)Bir rota, bir kalkış ve bir varış havalimanına bağlıdır ve bir havalimanı birden fazla rota için kalkış veya varış noktası olabilir.
+
+19-)Bir uçak yalnızca bir havayoluna bağlıdır, bir havayolu birden fazla uçağa sahip olabilir.
+
+20-)Bir uçuş yalnızca bir rotaya bağlıdır, bir rota birden fazla uçuş için kullanılabilir.
+
+21-)Bir uçuş yalnızca bir uçak ile yapılabilir, bir uçak birden fazla uçuşta kullanılabilir.
+
+22-)Bir uçuş birden fazla yemek servisine sahip olabilir, bir yemek servisi yalnızca bir uçuşa bağlıdır.
+
+23-)Bir rezervasyon yalnızca bir kullanıcıya (müşteri veya hostes) bağlıdır, bir kullanıcı birden fazla rezervasyon yapabilir.
+
+24-)Bir rezervasyon yalnızca bir uçuşa bağlıdır, bir uçuş birden fazla rezervasyon içerebilir.
+
+25-)Bir bilet yalnızca bir rezervasyona bağlıdır, bir rezervasyon birden fazla bileti kapsayabilir.
+
+26-)Bir koltuk yalnızca bir uçağa aittir, bir uçak birden fazla koltuğa sahip olabilir.
+
+27-)Bir bilet bir koltuğa atanabilir, her koltuk yalnızca bir biletle ilişkilendirilebilir.
+
+28-)Bir ödeme yalnızca bir rezervasyona bağlıdır, bir rezervasyon birden fazla ödeme içerebilir.
+
+29-)Bir bagaj yalnızca bir rezervasyona bağlıdır, bir rezervasyon birden fazla bagaj içerebilir.
+
+30-)Bir uçuş yalnızca bir uçuş kapısından yapılır, bir uçuş kapısında birden fazla uçuş yapılabilir

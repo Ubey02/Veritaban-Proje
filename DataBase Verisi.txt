@@ -1,0 +1,113 @@
+INSERT INTO kullanicilar (ad, soyad, telefon, email,cinsiyet) VALUES
+('Ahmet', 'Kaya', '5551234567', 'ahmet.kaya@mail.com','Erkek'),
+('Ayşe', 'Yılmaz', '5552345678', 'ayse.yilmaz@mail.com','Erkek'),
+('Mehmet', 'Çelik', '5553456789', 'mehmet.celik@mail.com','Erkek'),
+('Fatma', 'Demir', '5554567890', 'fatma.demir@mail.com','Kadın'),
+('Ali', 'Öztürk', '5555678901', 'ali.ozturk@mail.com','Erkek');
+
+INSERT INTO musteriler (kullanici_ID, dogum_tarihi) VALUES
+(1, '1990-01-01'),
+(2, '1985-02-15'),
+(3, '1988-03-30'),
+(4, '1992-04-10'),
+(5, '1980-05-20');
+
+INSERT INTO havayollari (ad, ulke) VALUES
+('Türk Hava Yolları', 'Türkiye'),
+('Lufthansa', 'Almanya'),
+('Emirates', 'Birleşik Arap Emirlikleri'),
+('British Airways', 'İngiltere'),
+('Air France', 'Fransa');
+
+INSERT INTO havalimani (ad, sehir) VALUES
+('İstanbul Havalimanı', 'İstanbul'),
+('Frankfurt Havalimanı', 'Frankfurt'),
+('Dubai Havalimanı', 'Dubai'),
+('Heathrow Havalimanı', 'Londra'),
+('Charles de Gaulle Havalimanı', 'Paris');
+
+INSERT INTO rotalar (kalkis_havalimani_ID, varis_havalimani_ID, mesafe) VALUES
+(1, 2, 2000.50),
+(2, 3, 3000.75),
+(3, 4, 4000.20),
+(4, 5, 1500.30),
+(5, 1, 2500.80);
+
+INSERT INTO ucaklar (model, kapasite, havayolu_ID) VALUES
+('Airbus A320', 180, 1),
+('Boeing 747', 400, 2),
+('Airbus A380', 500, 3),
+('Boeing 777', 350, 4),
+('Airbus A350', 300, 5);
+
+INSERT INTO ucuslar (kalkis_saati, varis_saati, rota_ID, ucak_ID) VALUES
+('2024-12-25 08:00:00', '2024-12-25 12:00:00', 1, 1),
+('2024-12-26 10:00:00', '2024-12-26 16:00:00', 2, 2),
+('2024-12-27 09:30:00', '2024-12-27 15:30:00', 3, 3),
+('2024-12-28 14:00:00', '2024-12-28 20:00:00', 4, 4),
+('2024-12-29 07:00:00', '2024-12-29 11:00:00', 5, 5);
+
+INSERT INTO rezervasyonlar (kullanici_ID, ucus_ID, rezervasyon_tarihi) VALUES
+(1, 1, '2024-12-20'),
+(2, 2, '2024-12-21'),
+(3, 3, '2024-12-22'),
+(4, 4, '2024-12-23'),
+(5, 5, '2024-12-24');
+
+INSERT INTO koltuklar (ucak_ID, koltuk_no, rezervasyon_ID) VALUES
+(1, '1A', 1),
+(2, '2B', 2),
+(3, '3C', 3),
+(4, '4D', 4),
+(5, '5E', 5);
+
+INSERT INTO odemeler (rezervasyon_ID, odeme_tarihi, tutar, odeme_tipi) VALUES
+(1, '2024-12-20', 100.00, 'Kredi Kartı'),
+(2, '2024-12-21', 150.00, 'Nakit'),
+(3, '2024-12-22', 200.00, 'Kredi Kartı'),
+(4, '2024-12-23', 250.00, 'Banka Havalesi'),
+(5, '2024-12-24', 300.00, 'Kredi Kartı');
+
+INSERT INTO bagajlar (rezervasyon_ID, bagaj_turu, agirlik) VALUES
+(1, 'El Bagajı', 10.00),
+(2, 'Kabin Bagajı', 15.00),
+(3, 'Kabin Bagajı', 20.00),
+(4, 'Check-in Bagajı', 25.00),
+(5, 'El Bagajı', 12.00);
+
+INSERT INTO biletler (rezervasyon_ID, koltuk_no, fiyat) VALUES
+(1, '1A', 150.00),
+(2, '2B', 175.00),
+(3, '3C', 200.00),
+(4, '4D', 250.00),
+(5, '5E', 300.00);
+
+INSERT INTO ucuskapilari (ucus_ID, kapi_no) VALUES
+(1, 'A1'),
+(2, 'B2'),
+(3, 'C3'),
+(4, 'D4'),
+(5, 'E5');
+
+INSERT INTO yemekservis (ucus_ID, yemek_turu) VALUES
+(1, 'Ekspres Yiyecek'),
+(2, 'Öğle Yemeği'),
+(3, 'Akşam Yemeği'),
+(4, 'Kahvaltı'),
+(5, 'Akşam Yemeği');
+
+
+INSERT INTO hostesler (kullanici_ID, ucus_ID, maas,dogum_tarihi) VALUES
+(1, 1, 6000.00,'1990-01-01'),
+(2, 2, 7500.00,'1985-02-15'),
+(3, 3, 5200.00,'1988-03-30'),
+(4, 4, 7800.00,'1992-04-10'),
+(5, 5, 7000.00,'1980-05-20');
+
+INSERT INTO hostes_ucak (kullanici_ID, ucak_ID, gorev_tarihi, gorev_turu) VALUES
+(1, 1, '2024-12-25', 'Yemek Servisi'),
+(2, 2, '2024-12-26', 'Yardım'),
+(3, 3, '2024-12-27', 'Yemek Servisi'),
+(4, 4, '2024-12-28', 'Yardım'),
+(5, 5, '2024-12-29', 'Yemek Servisi');
+
